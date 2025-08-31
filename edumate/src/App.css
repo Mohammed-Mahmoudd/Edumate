@@ -64,7 +64,7 @@ body {
 }
 
 .upload-card {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(0, 0, 0, 0);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 24px;
@@ -314,7 +314,8 @@ body {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  padding: 1rem 1.5rem;
+  padding-inline: 2rem;
+  padding-block: 0.9rem;
   color: white;
   font-size: 1rem;
   resize: none;
@@ -404,4 +405,30 @@ body {
   .doc-name {
     max-width: 150px;
   }
+}
+
+.language-switcher {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 3;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 6px 10px;
+  border-radius: 8px;
+  backdrop-filter: blur(12px);
+}
+
+.language-switcher select {
+  background: transparent;
+  color: white;
+  border: none;
+  outline: none;
+  font-size: 12px;
+}
+
+.language-switcher option {
+  color: black;
 }

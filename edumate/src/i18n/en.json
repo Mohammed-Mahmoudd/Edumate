@@ -1,0 +1,15 @@
+{
+  "brandTitle": "EduMate",
+  "brandSubtitle": "Your AI Study Companion",
+  "uploadTitle": "Upload Your Study Material",
+  "uploadDescription": "Upload any document and I'll help you study it effectively",
+  "chooseDocument": "Choose Document",
+  "processing": "Processing your document...",
+  "newDocument": "New Document",
+  "inputPlaceholder": "Ask me anything about your document...",
+  "initialAnalysis": "Great! I've analyzed your document \"{file}\". I'm ready to help you study and answer any questions about the content. What would you like to know?",
+  "simulatedAnswer": "I understand your question about the document. Based on the content you've uploaded, here's what I can help you with...",
+  "language": "Language",
+  "arabic": "🇪🇬 العربية",
+  "english": "🇬🇧 English"
+}

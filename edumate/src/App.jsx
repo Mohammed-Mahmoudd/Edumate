@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { ShaderGradientCanvas } from "@shadergradient/react";
 import { ShaderGradient } from "@shadergradient/react";
 import "./App.css";
+import en from "./i18n/en.json";
+import ar from "./i18n/ar.json";
 
 function App() {
   const [currentStep, setCurrentStep] = useState("upload"); // "upload" or "chat"
@@ -11,6 +13,17 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [backgroundScale, setBackgroundScale] = useState(1);
   const fileInputRef = useRef(null);
+  const [language, setLanguage] = useState(() => {
+    const saved = localStorage.getItem("lang");
+    return saved === "en" || saved === "ar" ? saved : "ar"; // default Arabic
+  });
+  const messagesEndRef = useRef(null);
+
+  const strings = language === "ar" ? ar : en;
+
+  // Simple template formatter for strings like "{file}"
+  const format = (template, vars) =>
+    template.replace(/\{(\w+)\}/g, (_, k) => (vars && k in vars ? vars[k] : ""));
 
   // Animate background scale when step changes
   useEffect(() => {
@@ -56,7 +69,7 @@ function App() {
         setMessages([
           {
             type: "ai",
-            content: `Great! I've analyzed your document "${file.name}". I'm ready to help you study and answer any questions about the content. What would you like to know?`,
+            content: format(strings.initialAnalysis, { file: file.name }),
           },
         ]);
       }, 2000);
@@ -75,8 +88,7 @@ function App() {
     setTimeout(() => {
       const aiResponse = {
         type: "ai",
-        content:
-          "I understand your question about the document. Based on the content you've uploaded, here's what I can help you with...",
+        content: strings.simulatedAnswer,
       };
       setMessages((prev) => [...prev, aiResponse]);
       setIsLoading(false);
@@ -90,9 +102,28 @@ function App() {
     }
   };
 
+  // Persist language choice
+  useEffect(() => {
+    try {
+      localStorage.setItem("lang", language);
+    } catch (e) {
+      // ignore persist errors (e.g., storage disabled)
+      void e;
+    }
+  }, [language]);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
     <>
-      <div className="App">
+      <div
+        className="App"
+        dir={language === "ar" ? "rtl" : "ltr"}
+        style={{ textAlign: language === "ar" ? "right" : "left" }}
+      >
         {/* Animated Background */}
         <ShaderGradientCanvas
           style={{
@@ -152,19 +183,28 @@ function App() {
 
         {/* Main Content */}
         <div className="main-content">
+          {/* Language Switcher */}
+          <div className="language-switcher">
+            <label style={{ fontSize: 12 }}>{strings.language}:</label>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+            >
+              <option value="ar">{strings.arabic}</option>
+              <option value="en">{strings.english}</option>
+            </select>
+          </div>
           {currentStep === "upload" ? (
             <div className="upload-container">
               <div className="brand-header">
-                <h1 className="brand-title">EduMate</h1>
-                <p className="brand-subtitle">Your AI Study Companion</p>
+                <h1 className="brand-title">{strings.brandTitle}</h1>
+                <p className="brand-subtitle">{strings.brandSubtitle}</p>
               </div>
 
               <div className="upload-card">
                 <div className="upload-icon">📚</div>
-                <h2>Upload Your Study Material</h2>
-                <p>
-                  Upload any document and I'll help you study it effectively
-                </p>
+                <h2>{strings.uploadTitle}</h2>
+                <p>{strings.uploadDescription}</p>
 
                 <input
                   type="file"
@@ -184,13 +224,13 @@ function App() {
                   ) : (
                     <>
                       <span className="upload-icon-btn">⬆️</span>
-                      Choose Document
+                      {strings.chooseDocument}
                     </>
                   )}
                 </button>
 
                 {isLoading && (
-                  <p className="processing-text">Processing your document...</p>
+                  <p className="processing-text">{strings.processing}</p>
                 )}
               </div>
             </div>
@@ -209,7 +249,7 @@ function App() {
                     setMessages([]);
                   }}
                 >
-                  New Document
+                  {strings.newDocument}
                 </button>
               </div>
 
@@ -219,6 +259,7 @@ function App() {
                     <div className="message-content">{message.content}</div>
                   </div>
                 ))}
+                <div ref={messagesEndRef} />
                 {isLoading && (
                   <div className="message ai">
                     <div className="message-content">
@@ -234,10 +275,11 @@ function App() {
 
               <div className="input-container">
                 <textarea
+                disabled={isLoading}
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Ask me anything about your document..."
+                  onKeyDown={handleKeyPress}
+                  placeholder={strings.inputPlaceholder}
                   className="message-input"
                   rows="1"
                 />
